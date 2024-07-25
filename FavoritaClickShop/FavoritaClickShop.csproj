@@ -393,5 +393,8 @@
   <ItemGroup>
     <None Include="Resources\mensajero.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Logoicono %281%29.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

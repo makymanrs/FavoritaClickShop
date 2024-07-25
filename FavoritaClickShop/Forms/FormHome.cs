@@ -102,10 +102,16 @@ namespace FavoritaClickShop.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Login login = new Login();
+            _mainForm.Hide();
             this.Hide();
+            Login login = new Login();
             login.Show();
+            login.FormClosed += (s, args) =>
+            {
+                _mainForm.Close();
+                _mainForm.Dispose();
+                this.Dispose();
+            };
         }
-        // Agrega más manejadores de eventos para otros paneles si es necesario
     }
 }
