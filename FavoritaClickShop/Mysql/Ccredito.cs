@@ -125,15 +125,17 @@ namespace FavoritaClickShop.Mysql
                     return;
                 }
 
-                // Calcular el nuevo monto
-                decimal nuevoMonto = montoActual - abono;
+                // Calcular el nuevo monto asegurando que no sea negativo
+                decimal abonoReal = Math.Min(abono, montoActual);
+                decimal nuevoMonto = montoActual - abonoReal;
+                decimal devolucion = abono - abonoReal;
 
                 // Actualizar el crédito
                 string queryUpdate = @"UPDATE credito 
-                               SET cre_monto = @nuevoMonto, 
-                                   cre_fecpagado = @fechaPagado,
-                                   cre_pagado = @pagado
-                               WHERE cre_cod = @cre_cod";
+                        SET cre_monto = @nuevoMonto, 
+                            cre_fecpagado = @fechaPagado,
+                            cre_pagado = @pagado
+                        WHERE cre_cod = @cre_cod";
                 MySqlCommand commandUpdate = new MySqlCommand(queryUpdate, conexion);
                 commandUpdate.Parameters.AddWithValue("@nuevoMonto", nuevoMonto);
                 commandUpdate.Parameters.AddWithValue("@fechaPagado", fechaPagado);
@@ -142,7 +144,21 @@ namespace FavoritaClickShop.Mysql
 
                 commandUpdate.ExecuteNonQuery();
 
-                MessageBox.Show(nuevoMonto <= 0 ? "Crédito actualizado y marcado como pagado." : "Crédito actualizado.");
+                if (nuevoMonto <= 0)
+                {
+                    if (devolucion > 0)
+                    {
+                        MessageBox.Show($"Crédito actualizado y marcado como pagado. Devolución: {devolucion:C}");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Crédito actualizado y marcado como pagado.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Crédito actualizado.");
+                }
             }
             catch (Exception ex)
             {
@@ -156,6 +172,7 @@ namespace FavoritaClickShop.Mysql
                 }
             }
         }
+
         public void BuscarCreditosporFiltros(DataGridView tablaFactura, TextBox textBoxFiltro, ComboBox comboBoxFiltro)
         {
             MySqlConnection conexion = null;

@@ -86,7 +86,7 @@ namespace FavoritaClickShop.Forms
             historialfactura.MostrarFactura(dataGridViewFactura);
             ActualizarConteoRegistros();
         }
-
+        /*
         private void button5_Click(object sender, EventArgs e)
         {
             Mysql.Cdetalle objetoDetalle = new Mysql.Cdetalle();
@@ -95,6 +95,7 @@ namespace FavoritaClickShop.Forms
             historialfactura.MostrarFactura(dataGridViewFactura);
             ActualizarConteoRegistros();
         }
+        */
 
         private void FormHistorial_Load(object sender, EventArgs e)
         {
