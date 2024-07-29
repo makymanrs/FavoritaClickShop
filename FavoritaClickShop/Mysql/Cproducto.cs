@@ -29,12 +29,11 @@ namespace FavoritaClickShop.Mysql
                 p.pro_cos as 'Costo',  
                 p.pro_can as 'Cantidad', 
                 p.pro_pre as 'Precio',
-                pr.prove_nom as 'Proveedor', 
-                
+                COALESCE(pr.prove_nom, 'Sin Proveedor') as 'Proveedor', 
                 p.pro_img 
             FROM 
                 producto p
-                INNER JOIN proveedor pr ON p.prove_id = pr.prove_id";
+                LEFT JOIN proveedor pr ON p.prove_id = pr.prove_id"; // Cambiar a LEFT JOIN para incluir productos sin proveedor
 
                 MySqlDataAdapter adapter = new MySqlDataAdapter(query, conexion);
                 DataTable dt = new DataTable();
@@ -246,7 +245,7 @@ namespace FavoritaClickShop.Mysql
 
                 string query = "SELECT p.pro_cod, p.pro_nom, p.pro_cad, p.pro_cos, p.pro_pre, p.pro_can, p.bo_id, p.pro_img, pr.prove_nom " +
                                "FROM producto p " +
-                               "JOIN proveedor pr ON p.prove_id = pr.prove_id " +
+                               "LEFT JOIN proveedor pr ON p.prove_id = pr.prove_id " +
                                "WHERE p.pro_cod = @codigo";
                 MySqlCommand command = new MySqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@codigo", codigo);
@@ -257,10 +256,18 @@ namespace FavoritaClickShop.Mysql
 
                 if (dt.Rows.Count > 0)
                 {
+                    // Check if the provider is null or empty
+                    if (string.IsNullOrEmpty(dt.Rows[0]["prove_nom"].ToString()))
+                    {
+                        // Handle the case where there is no provider
+                        MessageBox.Show("No hay proveedor asociado con este producto.");
+                    }
                     return dt.Rows[0]; // Devuelve la primera fila encontrada
                 }
                 else
                 {
+                    // Handle the case where no product is found
+                    MessageBox.Show("No se encontró el producto.");
                     return null; // No se encontraron resultados
                 }
             }
@@ -601,9 +608,9 @@ namespace FavoritaClickShop.Mysql
                 // Construir la consulta base
                 string query = "SELECT producto.pro_cod as 'Código Producto', producto.pro_nom as 'Nombre Producto', producto.pro_cad as 'Caducidad', " +
                                "producto.pro_cos as 'Costo', producto.pro_pre as 'Precio', producto.pro_can as 'Cantidad', " +
-                               "proveedor.prove_nom as 'Proveedor', producto.pro_img as 'Imagen' " +
+                               "IFNULL(proveedor.prove_nom, 'Sin Proveedor') as 'Proveedor', producto.pro_img as 'Imagen' " +
                                "FROM producto " +
-                               "INNER JOIN proveedor ON producto.prove_id = proveedor.prove_id " +
+                               "LEFT JOIN proveedor ON producto.prove_id = proveedor.prove_id " +
                                "WHERE 1=1";
 
                 // Determinar el filtro basado en la selección del ComboBox
@@ -682,5 +689,6 @@ namespace FavoritaClickShop.Mysql
                 }
             }
         }
+
     }
 }

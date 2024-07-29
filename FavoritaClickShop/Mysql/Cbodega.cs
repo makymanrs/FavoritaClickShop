@@ -290,7 +290,6 @@ namespace FavoritaClickShop.Mysql
             }
         }
 
-
         public DataRow buscarBodega(int id)
         {
             MySqlConnection conexion = null;
@@ -299,11 +298,13 @@ namespace FavoritaClickShop.Mysql
                 Conexion objetoConexion = new Conexion();
                 conexion = objetoConexion.establecerConexion();
 
+                // Modified query to use LEFT JOIN for proveedor
                 string query = @"SELECT bodega.bo_id, producto.pro_nom, bodega.bo_fecing, producto.pro_cad, producto.pro_can, producto.pro_cos, producto.pro_pre, proveedor.prove_nom
                          FROM bodega
                          INNER JOIN producto ON bodega.bo_id = producto.bo_id
-                         INNER JOIN proveedor ON producto.prove_id = proveedor.prove_id
+                         LEFT JOIN proveedor ON producto.prove_id = proveedor.prove_id
                          WHERE bodega.bo_id = @id";
+
                 MySqlCommand command = new MySqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@id", id);
 
@@ -313,10 +314,18 @@ namespace FavoritaClickShop.Mysql
 
                 if (dt.Rows.Count > 0)
                 {
+                    // Check if the provider is null or empty
+                    if (string.IsNullOrEmpty(dt.Rows[0]["prove_nom"].ToString()))
+                    {
+                        // Handle the case where there is no provider
+                        MessageBox.Show("No hay proveedor asociado con este producto en la bodega.");
+                    }
                     return dt.Rows[0]; // Devuelve la primera fila encontrada
                 }
                 else
                 {
+                    // Handle the case where no bodega is found
+                    MessageBox.Show("No se encontró la bodega.");
                     return null; // No se encontraron resultados
                 }
             }
