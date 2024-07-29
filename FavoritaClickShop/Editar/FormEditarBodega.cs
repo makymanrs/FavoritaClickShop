@@ -71,7 +71,8 @@ namespace FavoritaClickShop.Editar
                     dateTimePicker2.Value = Convert.ToDateTime(bodega["pro_cad"]);
                     numericUpDown1.Value = Convert.ToDecimal(bodega["pro_can"]);
                     numericUpDown2.Value = Convert.ToDecimal(bodega["pro_cos"]);
-                    numericUpDown3.Value = Convert.ToDecimal(bodega["pro_pre"]);     
+                    numericUpDown3.Value = Convert.ToDecimal(bodega["pro_pre"]);
+                    comboBox1.Text = bodega["prove_nom"].ToString();
                 }
                 else
                 {

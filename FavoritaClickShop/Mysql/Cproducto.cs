@@ -540,12 +540,9 @@ namespace FavoritaClickShop.Mysql
                 }
                 if (workbook != null)
                 {
-                    // No cerrar el libro, solo liberar recursos
                     Marshal.ReleaseComObject(workbook);
                 }
 
-                // No cerrar la aplicación Excel aquí
-                // No se invoca excelApp.Quit() ni se libera el objeto excelApp
             }
         }
         public void seleccionarProducto(DataGridView tablaProducto, TextBox textboxproductoId)

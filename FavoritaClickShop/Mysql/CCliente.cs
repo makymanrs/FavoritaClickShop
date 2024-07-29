@@ -14,7 +14,7 @@ namespace FavoritaClickShop.Mysql
     {
         public void guardarcliente(TextBox cod, TextBox id, TextBox primernom, TextBox segundonom, TextBox primerape, TextBox segundoape, TextBox edad, RichTextBox direccion, TextBox telefono)
         {
-            // Verificar si alguno de los campos está vacío
+            // Verificar si alguno de los campos estan vacíos
             if (string.IsNullOrWhiteSpace(cod.Text) || string.IsNullOrWhiteSpace(id.Text) ||
                 string.IsNullOrWhiteSpace(primernom.Text) || string.IsNullOrWhiteSpace(segundonom.Text) ||
                 string.IsNullOrWhiteSpace(primerape.Text) || string.IsNullOrWhiteSpace(segundoape.Text) ||
@@ -275,7 +275,7 @@ namespace FavoritaClickShop.Mysql
         {
             try
             {
-                // Asume que la columna del ID de bodega es la primera columna (índice 0)
+               
                 textboxclienteId.Text = tablacliente.CurrentRow.Cells[0].Value.ToString();
             }
             catch (Exception ex)

@@ -248,15 +248,19 @@ namespace FavoritaClickShop.Mysql
                 myCommandActualizarBodega.Parameters.AddWithValue("@proveId", proveId);
                 myCommandActualizarBodega.ExecuteNonQuery(); // Ejecutar la consulta de actualización en la tabla bodega
 
+                // Calcular el precio con el método CalcularPrecio
+                CalcularPrecio(costo, precio);
+
                 // Actualizar tabla producto
-                string queryActualizarProducto = "UPDATE producto SET pro_nom = @proNom, pro_cad = @proCad, pro_can = @proCan, pro_cos = @proCos, pro_pre = @proPre WHERE pro_cod = @proCod";
+                string queryActualizarProducto = "UPDATE producto SET pro_nom = @proNom, pro_cad = @proCad, pro_can = @proCan, pro_cos = @proCos, pro_pre = @proPre, prove_id = @proveId WHERE pro_cod = @proCod";
                 MySqlCommand myCommandActualizarProducto = new MySqlCommand(queryActualizarProducto, conexion, transaction);
                 myCommandActualizarProducto.Parameters.AddWithValue("@proCod", proCod);
                 myCommandActualizarProducto.Parameters.AddWithValue("@proNom", nom.Text);
                 myCommandActualizarProducto.Parameters.AddWithValue("@proCad", fechaCaducidad.Value);
                 myCommandActualizarProducto.Parameters.AddWithValue("@proCan", can.Value);
                 myCommandActualizarProducto.Parameters.AddWithValue("@proCos", costo.Value);
-                myCommandActualizarProducto.Parameters.AddWithValue("@proPre", precio.Value); // Actualizar el precio del producto
+                myCommandActualizarProducto.Parameters.AddWithValue("@proPre", precio.Value); // Actualizar el precio del producto con el precio calculado
+                myCommandActualizarProducto.Parameters.AddWithValue("@proveId", proveId); // Actualizar el prove_id del producto
                 myCommandActualizarProducto.ExecuteNonQuery(); // Ejecutar la consulta de actualización en la tabla producto
 
                 // Confirmar la transacción
@@ -286,6 +290,7 @@ namespace FavoritaClickShop.Mysql
             }
         }
 
+
         public DataRow buscarBodega(int id)
         {
             MySqlConnection conexion = null;
@@ -294,9 +299,10 @@ namespace FavoritaClickShop.Mysql
                 Conexion objetoConexion = new Conexion();
                 conexion = objetoConexion.establecerConexion();
 
-                string query = @"SELECT bodega.bo_id, producto.pro_nom ,bodega.bo_fecing , producto.pro_cad, producto.pro_can, producto.pro_cos, producto.pro_pre 
-                         FROM bodega 
-                         INNER JOIN producto ON bodega.bo_id = producto.bo_id 
+                string query = @"SELECT bodega.bo_id, producto.pro_nom, bodega.bo_fecing, producto.pro_cad, producto.pro_can, producto.pro_cos, producto.pro_pre, proveedor.prove_nom
+                         FROM bodega
+                         INNER JOIN producto ON bodega.bo_id = producto.bo_id
+                         INNER JOIN proveedor ON producto.prove_id = proveedor.prove_id
                          WHERE bodega.bo_id = @id";
                 MySqlCommand command = new MySqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@id", id);

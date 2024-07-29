@@ -33,7 +33,7 @@ namespace FavoritaClickShop.Mysql
                         factura f ON cre.fac_cod = f.fac_cod
                      JOIN 
                         cliente c ON f.cli_id = c.cli_cod
-                     ORDER BY cre.cre_cod ASC"; // Orden ascendente por cre_cod
+                     ORDER BY cre.cre_cod ASC"; // Orden ascendente para cre_cod
 
                 MySqlDataAdapter adapter = new MySqlDataAdapter(query, conexion);
                 DataTable dt = new DataTable();
