@@ -127,10 +127,12 @@ namespace FavoritaClickShop.Mysql
         }
 
         // Modificar el método InsertarFactura para devolver el código de la factura recién insertada
-        public string InsertarFactura(DateTimePicker dateTimePicker, TextBox textBoxClienteCodigo, Label labelTotalPagar, DataGridView dataGridFactura)
+        public string InsertarFactura(DateTimePicker dateTimePicker, TextBox textBoxClienteCodigo, Label labelTotalPagar, DataGridView dataGridFactura, TextBox textBoxFacturaCodigo)
         {
             MySqlConnection conexion = null;
             string facturaCodigo = string.Empty;
+            bool stockSuficiente = true;
+
             try
             {
                 Conexion objetoConexion = new Conexion();
@@ -155,28 +157,32 @@ namespace FavoritaClickShop.Mysql
                             if (stockDisponible < cantidadSolicitada)
                             {
                                 MessageBox.Show($"No hay suficiente stock para el producto con código {codigoProducto}. Stock disponible: {stockDisponible}");
-                                return string.Empty; // Salir del método sin insertar la factura
+                                stockSuficiente = false;
+                                break; // Salir del bucle si no hay suficiente stock
                             }
                         }
                     }
                 }
 
-                // Insertar la factura
-                string query = "INSERT INTO factura (fac_fec, cli_id, fac_total) VALUES (@Fecha, @ClienteId, @TotalPagar)";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, conexion))
+                // Si hay suficiente stock para todos los productos, insertar la factura
+                if (stockSuficiente)
                 {
-                    cmd.Parameters.AddWithValue("@Fecha", dateTimePicker.Value);
-                    cmd.Parameters.AddWithValue("@ClienteId", textBoxClienteCodigo.Text);
-                    cmd.Parameters.AddWithValue("@TotalPagar", decimal.Parse(labelTotalPagar.Text.Replace("Total a Pagar: ", "").Trim(), System.Globalization.NumberStyles.Currency));
+                    string query = "INSERT INTO factura (fac_fec, cli_id, fac_total) VALUES (@Fecha, @ClienteId, @TotalPagar)";
 
-                    cmd.ExecuteNonQuery();
+                    using (MySqlCommand cmd = new MySqlCommand(query, conexion))
+                    {
+                        cmd.Parameters.AddWithValue("@Fecha", dateTimePicker.Value);
+                        cmd.Parameters.AddWithValue("@ClienteId", textBoxClienteCodigo.Text);
+                        cmd.Parameters.AddWithValue("@TotalPagar", decimal.Parse(labelTotalPagar.Text.Replace("Total a Pagar: ", "").Trim(), System.Globalization.NumberStyles.Currency));
 
-                    // Obtener el código de la factura recién insertada
-                    facturaCodigo = cmd.LastInsertedId.ToString();
+                        cmd.ExecuteNonQuery();
 
-                    // Insertar detalles de la factura
-                    InsertarDetalleFactura(facturaCodigo, dataGridFactura, conexion);
+                        // Obtener el código de la factura recién insertada
+                        facturaCodigo = cmd.LastInsertedId.ToString();
+
+                        // Insertar detalles de la factura
+                        InsertarDetalleFactura(facturaCodigo, dataGridFactura, conexion);
+                    }
                 }
             }
             catch (Exception ex)
@@ -190,8 +196,18 @@ namespace FavoritaClickShop.Mysql
                     conexion.Close();
                 }
             }
+
+            if (!string.IsNullOrEmpty(facturaCodigo))
+            {
+                MessageBox.Show($"Factura pagada exitosamente. Código de factura: {facturaCodigo}");
+                textBoxFacturaCodigo.Text = facturaCodigo; // Mostrar el código de la factura en el TextBox
+            }
+
             return facturaCodigo;
         }
+
+
+
 
         public void InsertarDetalleFactura(string facturaCodigo, DataGridView dataGridFactura, MySqlConnection conexion)
         {

@@ -25,6 +25,7 @@ namespace FavoritaClickShop.Forms
             }
             dataGridFactura.RowTemplate.Height = 50;
             dataGridFactura.ReadOnly = true;
+            textBox1.Enabled=false;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -182,9 +183,9 @@ namespace FavoritaClickShop.Forms
             Mysql.Cfactura objetoFactura = new Mysql.Cfactura();
 
             // Llamar al método para insertar la factura
-            objetoFactura.InsertarFactura(dateTimePicker1, textBox2, label20, dataGridFactura);
+            objetoFactura.InsertarFactura(dateTimePicker1, textBox2, label20, dataGridFactura,textBox1);
 
-            MessageBox.Show("Factura registrada exitosamente.");
+          //  MessageBox.Show("Factura registrada exitosamente.");
             // Aquí puedes agregar cualquier lógica adicional necesaria para manejar pagos sin crédito
         }
 
@@ -196,7 +197,7 @@ namespace FavoritaClickShop.Forms
             Mysql.Cfactura objetoFactura = new Mysql.Cfactura();
 
             // Llamar al método para insertar la factura y obtener el código de factura recién insertado
-            string facturaCodigo = objetoFactura.InsertarFactura(dateTimePicker1, textBox2, label20, dataGridFactura);
+            string facturaCodigo = objetoFactura.InsertarFactura(dateTimePicker1, textBox2, label20, dataGridFactura, textBox1);
 
             // Insertar el crédito asociado a la factura
             objetoFactura.InsertarCredito(facturaCodigo, saldo);
@@ -273,6 +274,11 @@ namespace FavoritaClickShop.Forms
             {
                 numericUpDown1.Focus();
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
